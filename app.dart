@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'core/theme/app_theme.dart';
-import 'screens/splash/splash_screen.dart';
+import 'lib/core/theme/app_theme.dart';
+import 'lib/screens/splash/splash_screen.dart';
 
 class LostAndFoundApp extends StatelessWidget {
   const LostAndFoundApp({super.key});
