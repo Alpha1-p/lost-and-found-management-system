@@ -19,17 +19,7 @@ item_bp = Blueprint(
 @item_bp.route("/", methods=["POST"])
 def create():
     data = request.get_json() or {}
-
-    # Temporary user ID for API testing.
-    # We will replace this with authenticated user information.
-    user_id = data.get("user_id")
-
-    if not user_id:
-        return {
-            "message": "user_id is required"
-        }, 400
-
-    return create_item(data, user_id)
+    return create_item(data)
 
 
 @item_bp.route("/", methods=["GET"])
@@ -45,33 +35,9 @@ def get_one(item_id):
 @item_bp.route("/<int:item_id>", methods=["PUT"])
 def update(item_id):
     data = request.get_json() or {}
-
-    user_id = data.get("user_id")
-
-    if not user_id:
-        return {
-            "message": "user_id is required"
-        }, 400
-
-    return update_item(
-        item_id,
-        data,
-        user_id
-    )
+    return update_item(item_id, data)
 
 
 @item_bp.route("/<int:item_id>", methods=["DELETE"])
 def delete(item_id):
-    data = request.get_json() or {}
-
-    user_id = data.get("user_id")
-
-    if not user_id:
-        return {
-            "message": "user_id is required"
-        }, 400
-
-    return delete_item(
-        item_id,
-        user_id
-    )
+    return delete_item(item_id)

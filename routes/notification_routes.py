@@ -1,36 +1,31 @@
-from flask import Blueprint, request
-
-from controllers.notification_controller import (
-    create_notification,
-    get_user_notifications,
-    mark_notification_read
-)
+from utils.database import db
+from datetime import datetime
 
 
-notification_bp = Blueprint(
-    "notifications",
-    __name__,
-    url_prefix="/api/notifications"
-)
+class Notification(db.Model):
+    __tablename__ = "notifications"
 
+    id = db.Column(db.Integer, primary_key=True)
 
-@notification_bp.route("/", methods=["POST"])
-def create():
-    data = request.get_json() or {}
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False
+    )
 
-    return create_notification(data)
+    message = db.Column(db.Text)
 
+    is_read = db.Column(
+        db.Boolean,
+        default=False
+    )
 
-@notification_bp.route("/user/<int:user_id>", methods=["GET"])
-def get_user(user_id):
-    return get_user_notifications(user_id)
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
 
-
-@notification_bp.route(
-    "/<int:notification_id>/read",
-    methods=["PUT"]
-)
-def mark_read(notification_id):
-    return mark_notification_read(
-        notification_id
+    user = db.relationship(
+        "User",
+        backref="notifications"
     )

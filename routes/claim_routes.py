@@ -1,46 +1,35 @@
-from flask import Blueprint, request, jsonify
-
-from controllers.claim_controller import (
-    create_claim,
-    get_all_claims,
-    update_claim
-)
+from utils.database import db
+from datetime import datetime
 
 
-claim_bp = Blueprint(
-    "claims",
-    __name__,
-    url_prefix="/api/claims"
-)
+class Claim(db.Model):
+    __tablename__ = "claims"
 
+    id = db.Column(db.Integer, primary_key=True)
 
-@claim_bp.route("/", methods=["POST"])
-def create():
-    data = request.get_json(silent=True)
-
-    if not isinstance(data, dict):
-        return jsonify({
-            "message": "Request body must be valid JSON"
-        }), 400
-
-    return create_claim(data)
-
-
-@claim_bp.route("/", methods=["GET"])
-def get_all():
-    return get_all_claims()
-
-
-@claim_bp.route("/<int:claim_id>", methods=["PUT"])
-def update(claim_id):
-    data = request.get_json(silent=True)
-
-    if not isinstance(data, dict):
-        return jsonify({
-            "message": "Request body must be valid JSON"
-        }), 400
-
-    return update_claim(
-        claim_id,
-        data
+    item_id = db.Column(
+        db.Integer,
+        db.ForeignKey("items.id"),
+        nullable=False
     )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False
+    )
+
+    message = db.Column(db.Text)
+
+    status = db.Column(
+        db.String(20),
+        default="Pending"
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
+
+    item = db.relationship("Item", backref="claims")
+    user = db.relationship("User", backref="claims")

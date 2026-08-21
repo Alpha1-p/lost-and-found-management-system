@@ -1,5 +1,6 @@
-from utils.database import db
 from datetime import datetime
+
+from utils.database import db
 
 
 class Notification(db.Model):
