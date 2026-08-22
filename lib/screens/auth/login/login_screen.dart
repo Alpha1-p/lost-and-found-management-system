@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/routes/app_routes.dart';
+import '../../../core/services/api_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -10,18 +11,81 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Controllers for user input
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  // Controls password visibility
   bool obscurePassword = true;
+  bool isLoading = false;
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> handleLogin() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter your email and password"),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      final result = await ApiService.login(
+        email: email,
+        password: password,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+
+      if (result['message'] == 'Login successful') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Login successful"),
+          ),
+        );
+
+        Navigator.pushReplacementNamed(
+          context,
+          AppRoutes.home,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              result['message'] ?? 'Login failed',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Connection failed: $e"),
+        ),
+      );
+    }
   }
 
   @override
@@ -107,19 +171,21 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(
               height: 50,
               child: ElevatedButton(
-                onPressed: () {
-                  // Backend authentication will be added later
-                  Navigator.pushReplacementNamed(
-                    context,
-                    AppRoutes.home,
-                  );
-                },
-                child: const Text(
-                  "LOGIN",
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
+                onPressed: isLoading ? null : handleLogin,
+                child: isLoading
+                    ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text(
+                        "LOGIN",
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
               ),
             ),
 

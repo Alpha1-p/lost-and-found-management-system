@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
 
+import '../../core/routes/app_routes.dart';
+import '../../core/services/api_service.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = ApiService.currentUser;
+
+    final String fullName =
+        user?['full_name']?.toString() ?? 'User';
+
+    final String email =
+        user?['email']?.toString() ?? 'No email available';
+
+    final String phone =
+        user?['phone']?.toString() ?? 'No phone number';
+
+    final String userId =
+        user?['id']?.toString() ?? 'N/A';
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Profile"),
@@ -13,7 +30,6 @@ class ProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-
             const CircleAvatar(
               radius: 60,
               child: Icon(
@@ -24,17 +40,17 @@ class ProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            const Text(
-              "Pascal",
-              style: TextStyle(
+            Text(
+              fullName,
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
 
-            const Text(
-              "pascal@email.com",
-              style: TextStyle(
+            Text(
+              email,
+              style: const TextStyle(
                 color: Colors.grey,
               ),
             ),
@@ -45,23 +61,25 @@ class ProfileScreen extends StatelessWidget {
               child: ListTile(
                 leading: const Icon(Icons.phone),
                 title: const Text("Phone"),
-                subtitle: const Text("+233 XX XXX XXXX"),
+                subtitle: Text(phone),
               ),
             ),
 
             Card(
               child: ListTile(
                 leading: const Icon(Icons.badge),
-                title: const Text("Student ID"),
-                subtitle: const Text("GCTU20260001"),
+                title: const Text("User ID"),
+                subtitle: Text(userId),
               ),
             ),
 
             Card(
-              child: ListTile(
-                leading: const Icon(Icons.school),
-                title: const Text("Institution"),
-                subtitle: const Text("Ghana Communication Technology University"),
+              child: const ListTile(
+                leading: Icon(Icons.school),
+                title: Text("Institution"),
+                subtitle: Text(
+                  "Ghana Communication Technology University",
+                ),
               ),
             ),
 
@@ -75,7 +93,15 @@ class ProfileScreen extends StatelessWidget {
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  ApiService.logout();
+
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.login,
+                    (route) => false,
+                  );
+                },
                 icon: const Icon(Icons.logout),
                 label: const Text(
                   "Logout",
