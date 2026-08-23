@@ -217,8 +217,8 @@ Sensitive credentials and configuration values are not intended to be committed 
 
 | No. | Member                         | Responsibility                    |
 | --- | -------------------------------|-----------------------------------|
-| 1   | Owusu Otimah Adelaide          |  Cloud Architecture               |
-| 2   | Pascal Monnou Sourou Dieu-donne| Frontend Development              |
+| 1   | PascalMonnou Sourou Dieu-donne |  Cloud Architecture               |
+| 2   |Owusu Otimah Adelaide           | Frontend Development              |
 | 3   | Rockson Kwesi Asamoah          | Backend Development               |
 | 4   | Miwonorvi Kale Jiagge          | Database & Cloud Storage          |
 | 5   |Zeinab                          | Testing & Documentation           |
